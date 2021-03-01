@@ -2,7 +2,7 @@
 
 namespace Kwaadpepper\Enum\Traits;
 
-use App\Enums\BaseEnum;
+use Kwaadpepper\Enum\BaseEnum;
 
 /**
  * @property array $enumCasts Map attribute names to enum classes.
