@@ -4,6 +4,7 @@ namespace Kwaadpepper\Enum\Tests;
 
 use Kwaadpepper\Enum\Tests\Enums\ContactFormCivility;
 use Kwaadpepper\Enum\Tests\Enums\Days;
+use Kwaadpepper\Enum\Tests\Enums\ForceStringsFromInteger;
 use Orchestra\Testbench\TestCase;
 
 class EnumTest extends TestCase
@@ -28,6 +29,9 @@ class EnumTest extends TestCase
         })->middleware('bindings');
         $router->get('/civilities/{civility}', function (ContactFormCivility $civility) {
             return response()->json([$civility]);
+        })->middleware('bindings');
+        $router->get('/force/{force}', function (ForceStringsFromInteger $force) {
+            return response()->json([$force]);
         })->middleware('bindings');
     }
 
@@ -69,14 +73,14 @@ class EnumTest extends TestCase
             7 => 'Sunday'
         ], Days::toLabels());
         $this->assertEquals([
-            0 => 'None',
-            1 => 'Monday',
-            2 => 'Tuesday',
-            4 => 'Wednesday',
-            8 => 'Thursday',
-            16 => 'Friday',
-            32 => 'Saturday',
-            64 => 'Sunday'
+            0 => Days::none(),
+            1 => Days::mon(),
+            2 => Days::tue(),
+            3 => Days::wed(),
+            4 => Days::thu(),
+            5 => Days::fri(),
+            6 => Days::sat(),
+            7 => Days::sun()
         ], Days::toArray());
         $this->assertEquals('Monday', (string)$mon);
     }
@@ -96,5 +100,12 @@ class EnumTest extends TestCase
         $response = $this->call('GET', '/civilities/mme');
         $response->assertOk();
         $response->assertExactJson([ContactFormCivility::mme()]);
+    }
+
+    public function testRoutesWithEnumIntString()
+    {
+        $response = $this->call('GET', '/force/1');
+        $response->assertOk();
+        $response->assertExactJson([ForceStringsFromInteger::valueB()]);
     }
 }

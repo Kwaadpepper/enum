@@ -28,17 +28,14 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
     private static $definitionCache = [];
 
     /**
-     * @return string[]
-     * @return array<string|int, string>
+     * @return array[BaseEnum]
      */
     public static function toArray(): array
     {
         $array = [];
-
         foreach (static::resolveDefinition() as $definition) {
-            $array[$definition->value] = $definition->label;
+            $array[] = static::make($definition->value);
         }
-
         return $array;
     }
 
@@ -47,7 +44,9 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
      */
     public static function toValues(): array
     {
-        return array_keys(static::toArray());
+        return \array_map(function ($baseEnum) {
+            return $baseEnum->value;
+        }, static::toArray());
     }
 
     /**
@@ -55,7 +54,9 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
      */
     public static function toLabels(): array
     {
-        return array_values(static::toArray());
+        return \array_map(function ($baseEnum) {
+            return $baseEnum->label;
+        }, static::toArray());
     }
 
     /**
@@ -84,7 +85,6 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
     {
         if (!(is_string($value) || is_int($value))) {
             $enumClass = static::class;
-
             throw new TypeError("Only string and integer are allowed values for enum {$enumClass}.");
         }
 
@@ -300,11 +300,18 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
      */
     public function resolveRouteBinding($value, $field = null)
     {
+        // try to cast numeric value first
         try {
             return static::make(is_numeric($value) ? intval($value) : $value);
         } catch (BadMethodCallException $e) {
-            return null;
         }
+        // try string value after that
+        try {
+            return static::make($value);
+        } catch (BadMethodCallException $e) {
+        }
+        // could not find a suitable value
+        return null;
     }
 
     /**

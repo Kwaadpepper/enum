@@ -19,3 +19,10 @@ All notable changes to `Enum` will be documented in this file.
     protected $enumCasts = [
         'status' => OrderStatus::class // This is a class that extends \Kwaadpepper\Enum\BaseEnum
     ];
+
+## Version 0.1.0
+
+### - Changed
+- toArray Method now returns an array of BaseEnums
+  this is because php numeric string array indexes to int, this would break
+  origin enum values
