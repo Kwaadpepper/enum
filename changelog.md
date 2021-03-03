@@ -26,3 +26,8 @@ All notable changes to `Enum` will be documented in this file.
 - toArray Method now returns an array of BaseEnums
   this is because php numeric string array indexes to int, this would break
   origin enum values
+
+## Version 0.1.1
+
+### Fixed
+  - fixed performances issue on toValues and toLabels

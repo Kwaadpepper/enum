@@ -44,9 +44,11 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
      */
     public static function toValues(): array
     {
-        return \array_map(function ($baseEnum) {
-            return $baseEnum->value;
-        }, static::toArray());
+        $array = [];
+        foreach (static::resolveDefinition() as $definition) {
+            $array[] = $definition->value;
+        }
+        return $array;
     }
 
     /**
@@ -54,9 +56,11 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
      */
     public static function toLabels(): array
     {
-        return \array_map(function ($baseEnum) {
-            return $baseEnum->label;
-        }, static::toArray());
+        $array = [];
+        foreach (static::resolveDefinition() as $definition) {
+            $array[] = $definition->label;
+        }
+        return $array;
     }
 
     /**
