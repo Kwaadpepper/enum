@@ -31,3 +31,8 @@ All notable changes to `Enum` will be documented in this file.
 
 ### Fixed
   - fixed performances issue on toValues and toLabels
+
+## Version 0.1.2
+
+### Changed
+  - changed toJson to output array with label and value

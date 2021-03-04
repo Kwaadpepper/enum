@@ -267,7 +267,10 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
      */
     public function jsonSerialize()
     {
-        return $this->value;
+        return [
+            'value' => $this->value,
+            'label' => $this->label
+        ];
     }
 
     public function __toString(): string
