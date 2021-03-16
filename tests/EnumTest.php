@@ -2,6 +2,7 @@
 
 namespace Kwaadpepper\Enum\Tests;
 
+use Kwaadpepper\Enum\Rules\EnumIsValidRule;
 use Kwaadpepper\Enum\Tests\Enums\ContactFormCivility;
 use Kwaadpepper\Enum\Tests\Enums\Days;
 use Kwaadpepper\Enum\Tests\Enums\ForceStringsFromInteger;
@@ -107,5 +108,13 @@ class EnumTest extends TestCase
         $response = $this->call('GET', '/force/1');
         $response->assertOk();
         $response->assertExactJson([ForceStringsFromInteger::valueB()]);
+    }
+
+    public function testRules()
+    {
+        $rule = new EnumIsValidRule(Days::class);
+        $this->assertTrue($rule->passes('day', Days::mon()->value));
+        $this->assertFalse($rule->passes('day', 9999));
+        $this->assertFalse($rule->passes('day', Days::mon()));
     }
 }

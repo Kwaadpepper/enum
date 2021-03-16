@@ -32,5 +32,12 @@
         "psr-4": {
             "Kwaadpepper\\Enum\\Tests\\": "tests"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Kwaadpepper\\Enum\\EnumServiceProvider"
+            ]
+        }
     }
 }
