@@ -285,7 +285,7 @@ abstract class BaseEnum implements JsonSerializable, UrlRoutable
      */
     public function getRouteKey()
     {
-        throw new NotImplementedException('getRouteKey not implemented, should not be used');
+        return $this->value;
     }
 
     /**
