@@ -69,22 +69,6 @@ abstract class BaseEnum implements JsonSerializable
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
-     * @return bool|mixed
-     * @throws TypeError              If anything else thant string or int is used.
-     * @throws BadMethodCallException If a matching definition cannot be found.
-     */
-    public function __call(string $name, array $arguments)
-    {
-        if (strpos($name, 'is') === 0) {
-            $other = static::make(substr($name, 2));
-            return $this->equals($other);
-        }
-        return self::__callStatic($name, $arguments);
-    }
-
-    /**
      * Output the value as a string
      * @return string
      */
