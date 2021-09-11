@@ -2,7 +2,7 @@
 
 namespace Kwaadpepper\Enum\Tests\Enums;
 
-use Kwaadpepper\Enum\BaseEnum;
+use Kwaadpepper\Enum\BaseEnumRoutable;
 
 /**
  * @method static self none()
@@ -14,7 +14,7 @@ use Kwaadpepper\Enum\BaseEnum;
  * @method static self sat()
  * @method static self sun()
  */
-final class Days extends BaseEnum
+final class Days extends BaseEnumRoutable
 {
     protected static function values(): array
     {
@@ -46,7 +46,7 @@ final class Days extends BaseEnum
 
     public function __toString(): string
     {
-        return (string) $this->label;
+        return (string)$this->label;
     }
 
     /**

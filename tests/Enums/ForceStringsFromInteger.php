@@ -2,14 +2,14 @@
 
 namespace Kwaadpepper\Enum\Tests\Enums;
 
-use Kwaadpepper\Enum\BaseEnum;
+use Kwaadpepper\Enum\BaseEnumRoutable;
 
 /**
  * @method static self valueA()
  * @method static self valueB()
  * @method static self valueC()
  */
-final class ForceStringsFromInteger extends BaseEnum
+final class ForceStringsFromInteger extends BaseEnumRoutable
 {
     protected static function values(): array
     {
