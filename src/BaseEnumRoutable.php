@@ -21,7 +21,9 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      */
     public function getRouteKey()
     {
+        // @codeCoverageIgnoreStart
         throw new NotImplementedException('getRouteKey not implemented, should not be used.');
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -31,7 +33,9 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      */
     public function getRouteKeyName()
     {
+        // @codeCoverageIgnoreStart
         throw new NotImplementedException('getRouteKeyName not implemented, should not be used.');
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -72,6 +76,8 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      */
     public function resolveChildRouteBinding($childType, $value, $field)
     {
+        // @codeCoverageIgnoreStart
         throw new NotImplementedException('resolveChildRouteBinding not implemented, should not be used.');
+        // @codeCoverageIgnoreEnd
     }
 }

@@ -19,14 +19,14 @@ final class Days extends BaseEnumRoutable
     protected static function values(): array
     {
         return [
-            'none' => 0,
-            'mon' => 1,
-            'tue' => 1 << 1,
-            'wed' => 1 << 2,
-            'thu' => 1 << 3,
-            'fri' => 1 << 4,
-            'sat' => 1 << 5,
-            'sun' => 1 << 6,
+            'none' => 1,
+            'mon' => 1 << 1,
+            'tue' => 1 << 2,
+            'wed' => 1 << 3,
+            'thu' => 1 << 4,
+            'fri' => 1 << 5,
+            'sat' => 1 << 6,
+            'sun' => 1 << 7,
         ];
     }
 
