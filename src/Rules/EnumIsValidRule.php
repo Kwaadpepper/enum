@@ -22,7 +22,8 @@ class EnumIsValidRule extends BaseEnumRule
     {
         try {
             // try cast to int if is int
-            $value = is_numeric($value) && floatval(intval($value)) === floatval($value) ? (int)$value : $value;
+            $value = (is_numeric($value) and floatval(intval($value)) === floatval($value)) ?
+                (int)$value : $value;
             forward_static_call([$this->enumClass, 'make'], $value);
         } catch (TypeError $e) {
             $this->messageType = 1;
