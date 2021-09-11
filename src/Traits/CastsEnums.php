@@ -97,7 +97,7 @@ trait CastsEnums
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return \Kwaadpepper\Enums\BaseEnum|null
+     * @return \Kwaadpepper\Enum\BaseEnum|null
      */
     protected function castToEnum($key, $value): ?BaseEnum
     {
