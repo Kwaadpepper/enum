@@ -1,9 +1,8 @@
 # Enum
-
+![GitHub](https://img.shields.io/github/license/Kwaadpepper/enum?style=flat-square)
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
-[![StyleCI][ico-styleci]][link-styleci]
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Kwaadpepper/enum/PHP%20Composer?style=flat-square)
 
 This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
 
