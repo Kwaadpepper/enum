@@ -39,7 +39,7 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      *
      * @param  mixed  $value
      * @param  string|null  $field
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return \Kwaadpepper\Enum\BaseEnum|null
      */
     // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
     public function resolveRouteBinding($value, $field = null)

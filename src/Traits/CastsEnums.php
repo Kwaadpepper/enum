@@ -6,9 +6,26 @@ use Kwaadpepper\Enum\BaseEnum;
 
 /**
  * @property array $enumCasts Map attribute names to enum classes.
+ * @method bool hasCast(string $key, array|string|null $types = null)
+ * @method mixed castAttribute(string $key, mixed $value)
  */
 trait CastsEnums
 {
+
+    /**
+     * The model's attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
+     * Propertis that should be casted to enum
+     *
+     * @var array
+     */
+    protected $enumCasts = [];
+
     /**
      * Get a plain attribute (not a relationship).
      *
@@ -36,7 +53,7 @@ trait CastsEnums
     public function setAttribute($key, $value)
     {
         if ($value !== null && $this->hasEnumCast($key)) {
-            /** @var \App\Enums\BaseEnum $enum */
+            /** @var \Kwaadpepper\Enum\BaseEnum $enum */
             $enum = $this->enumCasts[$key];
 
             if ($value instanceof $enum) {
@@ -80,11 +97,11 @@ trait CastsEnums
      *
      * @param  string  $key
      * @param  mixed  $value
-     * @return \App\Enums\BaseEnum|null
+     * @return \Kwaadpepper\Enums\BaseEnum|null
      */
     protected function castToEnum($key, $value): ?BaseEnum
     {
-        /** @var \App\Enums\BaseEnum $enum */
+        /** @var \Kwaadpepper\Enum\BaseEnum $enum */
         $enum = $this->enumCasts[$key];
 
         if ($value === null || $value instanceof BaseEnum) {

@@ -40,13 +40,16 @@ class EnumIsValidRule extends BaseEnumRule
      */
     public function message(): string
     {
+        $message = null;
         switch ($this->messageType) {
             case 1:
-                return trans('enum::enum.isNotValid');
+                $message = trans('enum::enum.isNotValid');
+                break;
             case 2:
-                return trans('enum::enum.notInList', [
+                $message = trans('enum::enum.notInList', [
                     'values' => implode(',', forward_static_call([$this->enumClass, 'toValues']))
                 ]);
         }
+        return \is_string($message) ? $message : 'Invalid Enum';
     }
 }
