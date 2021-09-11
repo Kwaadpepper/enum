@@ -1,4 +1,0 @@
-{
-    "enum::enum.isNotValid": "Le champ :attribute n'est pas valide, il doit être un entier ou une chaine.",
-    "enum::enum.notInList": "Le champ :attribute doit être une des valeurs suivantes: :values"
-}

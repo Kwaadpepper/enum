@@ -1,4 +1,0 @@
-{
-    "enum::enum.isNotValid": "The field :attribute is not valid, it has to be an integer or a string.",
-    "enum::enum.notInList": "The field :attribute has to be one of the followings: :values"
-}
