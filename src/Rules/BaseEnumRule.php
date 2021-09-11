@@ -3,6 +3,7 @@
 namespace Kwaadpepper\Enum\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Kwaadpepper\Enum\BaseEnum;
 use Kwaadpepper\Enum\Exceptions\UnknownEnumClass;
 
 abstract class BaseEnumRule implements Rule
@@ -20,7 +21,7 @@ abstract class BaseEnumRule implements Rule
      */
     public function __construct(string $enumClass)
     {
-        if (!class_exists($enumClass)) {
+        if (!class_exists($enumClass) or !is_subclass_of($enumClass, BaseEnum::class)) {
             throw new UnknownEnumClass();
         }
         $this->enumClass = $enumClass;
