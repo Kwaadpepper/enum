@@ -46,7 +46,10 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
     {
         // try to cast numeric value first
         try {
-            return static::make(is_numeric($value) ? intval($value) : $value);
+            // try cast to int
+            $iValue = (is_numeric($value) and floatval(intval($value)) === floatval($value)) ?
+                (int)$value : $value;
+            return static::make($iValue);
         } catch (BadMethodCallException $e) {
             // try string value after that
             try {
