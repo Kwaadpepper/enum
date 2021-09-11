@@ -46,7 +46,9 @@ trait CastsEnums
                     $value = $this->castAttribute($key, $value);
                 }
                 // try cast to int if is int
-                $value = is_numeric($value) && floatval(intval($value)) === floatval($value) ? (int)$value : $value;
+                $value = is_numeric($value) && floatval(intval($value)) === floatval($value) ?
+                    (int)$value : $value;
+
                 $this->attributes[$key] = $enum::make($value)->value;
             }
 

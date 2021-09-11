@@ -7,6 +7,7 @@ use TypeError;
 
 class EnumIsValidRule extends BaseEnumRule
 {
+
     private $messageType = 0;
 
     /**
@@ -16,6 +17,7 @@ class EnumIsValidRule extends BaseEnumRule
      * @param  mixed  $value
      * @return bool
      */
+    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
     public function passes($attribute, $value): bool
     {
         try {

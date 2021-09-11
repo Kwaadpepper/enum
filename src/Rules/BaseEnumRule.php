@@ -7,6 +7,7 @@ use Kwaadpepper\Enum\Exceptions\UnknownEnumClass;
 
 abstract class BaseEnumRule implements Rule
 {
+
     /** @var string $enum */
     protected $enumClass;
 
@@ -33,6 +34,7 @@ abstract class BaseEnumRule implements Rule
      * @return bool
      */
     abstract public function passes($attribute, $value): bool;
+
     /**
      * Get the validation error message.
      *

@@ -2,8 +2,13 @@
 
 namespace Kwaadpepper\Enum;
 
+/**
+ * The definition of an enumeration
+ * This defines it's value, label and method name
+ */
 class BaseEnumDefinition
 {
+
     /** @var string|int */
     public $value;
 
@@ -21,13 +26,12 @@ class BaseEnumDefinition
     public function __construct(string $methodName, $value, string $label)
     {
         $this->methodName = strtolower($methodName);
-        $this->value = $value;
-        $this->label = $label;
+        $this->value      = $value;
+        $this->label      = $label;
     }
 
     /**
      * @param string|int $input
-     *
      * @return bool
      */
     public function equals($input): bool
@@ -35,11 +39,9 @@ class BaseEnumDefinition
         if ($this->value === $input) {
             return true;
         }
-
-        if (is_string($input) && $this->methodName === strtolower($input)) {
+        if (is_string($input) and $this->methodName === strtolower($input)) {
             return true;
         }
-
         return false;
     }
 }

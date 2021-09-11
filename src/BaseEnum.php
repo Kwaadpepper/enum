@@ -11,23 +11,89 @@ use Kwaadpepper\Enum\Exceptions\UnknownEnumProperty;
 use ReflectionClass;
 use TypeError;
 
+/**
+ * This Base Enum is the class which should
+ * be extended to create an enumeration
+ */
 abstract class BaseEnum implements JsonSerializable
 {
+
     /**
      * @var string|int
      * @readonly
      */
     protected $value;
 
-    /** @readonly */
+    /**
+     * @var string
+     * @readonly
+     */
     protected $label;
 
-    /** @var array<string, array<string, App\Enums\BaseEnumDefinition>> */
+    /** @var array<string, array<string, \Kwaadpepper\Enum\BaseEnumDefinition>> */
     private static $definitionCache = [];
 
+
+    // -- ENUM MAGIC METHODS --
+
     /**
-     * @return array[BaseEnum]
+     * @param string $attribute
+     * @return int|string
+     * @throws UnknownEnumProperty
      */
+    public function __get(string $attribute)
+    {
+        if ($attribute === 'value') {
+            return $this->value;
+        }
+        if ($attribute === 'label') {
+            return $this->label;
+        }
+        throw new UnknownEnumProperty($attribute);
+    }
+
+    /**
+     * @param string $name
+     * @param array $arguments
+     * @return static
+     * @throws TypeError              If anything else thant string or int is used.
+     * @throws BadMethodCallException If a matching definition cannot be found.
+     */
+    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
+    public static function __callStatic(string $name, array $arguments)
+    {
+        return static::make($name);
+    }
+
+    /**
+     * @param string $name
+     * @param array $arguments
+     * @return bool|mixed
+     * @throws TypeError              If anything else thant string or int is used.
+     * @throws BadMethodCallException If a matching definition cannot be found.
+     */
+    public function __call(string $name, array $arguments)
+    {
+        if (strpos($name, 'is') === 0) {
+            $other = static::make(substr($name, 2));
+            return $this->equals($other);
+        }
+        return self::__callStatic($name, $arguments);
+    }
+
+    /**
+     * Output the value as a string
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return (string)$this->value;
+    }
+
+
+    // -- ENUM EXPORTATION METHODS --
+
+    /** @return array<BaseEnum> */
     public static function toArray(): array
     {
         $array = [];
@@ -37,9 +103,7 @@ abstract class BaseEnum implements JsonSerializable
         return $array;
     }
 
-    /**
-     * @return string[]|int[]
-     */
+    /** @return array<int|string> */
     public static function toValues(): array
     {
         $array = [];
@@ -49,9 +113,7 @@ abstract class BaseEnum implements JsonSerializable
         return $array;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return array<string> */
     public static function toLabels(): array
     {
         $array = [];
@@ -62,114 +124,20 @@ abstract class BaseEnum implements JsonSerializable
     }
 
     /**
-     * Get the enum definition
+     * Json serialize implementation.
      *
-     * @return mixed|null
+     * @return array
      */
-    public function getDefinition()
+    public function jsonSerialize(): array
     {
-        $className = static::class;
-        foreach (self::$definitionCache[$className] as $definition => $enum) {
-            if ($enum->value === $this->value) {
-                return $definition;
-            }
-        }
-        return null;
+        return [
+            'label' => $this->label,
+            'value' => $this->value
+        ];
     }
 
-    /**
-     * @param string|int $value
-     * @throws TypeError
-     * @throws BadMethodCallException
-     * @return static
-     */
-    public static function make($value): BaseEnum
-    {
-        if (!(is_string($value) || is_int($value))) {
-            $enumClass = static::class;
-            throw new TypeError("Only string and integer are allowed values for enum {$enumClass}.");
-        }
 
-        $definition = static::findDefinition($value);
-
-        if ($definition === null) {
-            $enumClass = static::class;
-            throw new BadMethodCallException(
-                "There's no value {$value} defined for enum {$enumClass}," .
-                "consider adding it in the docblock definition."
-            );
-        }
-
-        $obj = new static();
-        $obj->value = $definition->value;
-        $obj->label = $definition->label;
-
-        return $obj;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return int|string
-     *
-     * @throws UnknownEnumProperty
-     */
-    public function __get(string $name)
-    {
-        if ($name === 'label') {
-            return $this->label;
-        }
-
-        if ($name === 'value') {
-            return $this->value;
-        }
-
-        throw new UnknownEnumProperty($name);
-    }
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return static
-     */
-    public static function __callStatic(string $name, array $arguments)
-    {
-        return static::make($name);
-    }
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return bool|mixed
-     *
-     * @throws UnknownEnumMethod
-     */
-    public function __call(string $name, array $arguments)
-    {
-        if (strpos($name, 'is') === 0) {
-            $other = static::make(substr($name, 2));
-            return $this->equals($other);
-        }
-
-        return self::__callStatic($name, $arguments);
-    }
-
-    public function equals(BaseEnum ...$others): bool
-    {
-        foreach ($others as $other) {
-            // @phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-            if (
-                get_class($this) === get_class($other)
-                && $this->value === $other->value
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    // -- DEFINITON METHODS --
 
     /**
      * @return string[]|int[]|Closure
@@ -190,90 +158,64 @@ abstract class BaseEnum implements JsonSerializable
     }
 
     /**
-     * @param string|int $input
+     * Get the enum definition
      *
-     * @return App\Enums\BaseEnumDefinition|null
+     * @return mixed|null
      */
-    private static function findDefinition($input): ?BaseEnumDefinition
+    public function getDefinition()
     {
-        foreach (static::resolveDefinition() as $definition) {
-            if ($definition->equals($input)) {
+        $className = static::class;
+        foreach (self::$definitionCache[$className] as $definition => $enum) {
+            if ($enum->value === $this->value) {
                 return $definition;
             }
         }
-
         return null;
     }
 
     /**
-     * @return App\Enums\BaseEnumDefinition[]
+     * Parse a value to create its corresponding enumeration value.
+     *
+     * @param string|int $value
+     * @return static
+     * @throws TypeError              If anything else thant string or int is used.
+     * @throws BadMethodCallException If a matching definition cannot be found.
      */
-    private static function resolveDefinition(): array
+    public static function make($value): BaseEnum
     {
-        $className = static::class;
-
-        if (self::$definitionCache[$className] ?? null) {
-            return self::$definitionCache[$className];
+        if (!(is_string($value) || is_int($value))) {
+            $enumClass = static::class;
+            throw new TypeError("Only string and integer are allowed values for enum $enumClass.");
         }
 
-        $reflectionClass = new ReflectionClass($className);
+        $definition = static::findDefinition($value);
 
-        $docComment = $reflectionClass->getDocComment();
-
-        preg_match_all('/@method\s+static\s+self\s+([\w_]+)\(\)/', $docComment, $matches);
-
-        $definition = [];
-
-        $valueMap = static::values();
-
-        if ($valueMap instanceof Closure) {
-            $valueMap = array_map($valueMap, array_combine($matches[1], $matches[1]));
+        if ($definition === null) {
+            $enumClass = static::class;
+            throw new BadMethodCallException(
+                "There's no value $value defined for enum $enumClass, consider adding it in the docblock definition."
+            );
         }
 
-        $labelMap = static::labels();
+        $obj        = new static();
+        $obj->value = $definition->value;
+        $obj->label = $definition->label;
 
-        if ($labelMap instanceof Closure) {
-            $labelMap = array_map($labelMap, array_combine($matches[1], $matches[1]));
-        }
-
-        foreach ($matches[1] as $methodName) {
-            $value = $valueMap[$methodName] = $valueMap[$methodName] ?? $methodName;
-
-            $label = $labelMap[$methodName] = $labelMap[$methodName] ?? $methodName;
-
-            $definition[$methodName] = new BaseEnumDefinition($methodName, $value, $label);
-        }
-
-        if (self::arrayHasDuplicates($valueMap)) {
-            throw new DuplicateValuesException();
-        }
-
-        if (self::arrayHasDuplicates($labelMap)) {
-            throw new DuplicateLabelsException();
-        }
-
-        return self::$definitionCache[$className] = self::$definitionCache[$className] ?? $definition;
+        return $obj;
     }
 
-    private static function arrayHasDuplicates(array $array): bool
+    public function equals(BaseEnum ...$others): bool
     {
-        return count($array) > count(array_unique($array));
-    }
-
-    /**
-     * @return int|string
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'label' => $this->label,
-            'value' => $this->value
-        ];
-    }
-
-    public function __toString(): string
-    {
-        return (string) $this->value;
+        foreach ($others as $other) {
+            // @phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
+            if (
+                get_class($this) === get_class($other)
+                && $this->value === $other->value
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -285,5 +227,79 @@ abstract class BaseEnum implements JsonSerializable
     {
         $cls = explode('\\', static::class);
         return array_pop($cls);
+    }
+
+
+    // -- PRIVATE METHODS --
+
+    /**
+     * @param string|int $input
+     * @return \Kwaadpepper\Enum\BaseEnumDefinition|null
+     */
+    private static function findDefinition($input): ?BaseEnumDefinition
+    {
+        foreach (static::resolveDefinition() as $definition) {
+            if ($definition->equals($input)) {
+                return $definition;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return \Kwaadpepper\Enum\BaseEnumDefinition[]
+     */
+    private static function resolveDefinition(): array
+    {
+        if (isset(self::$definitionCache[static::class])) {
+            return self::$definitionCache[static::class];
+        }
+
+        $reflectionClass = new ReflectionClass(static::class);
+        $docComment      = $reflectionClass->getDocComment();
+
+        preg_match_all('/@method\s+static\s+self\s+([\w_]+)\(\)/', $docComment, $matches);
+
+        $definition = [];
+        $valueMap   = static::values();
+        $labelMap   = static::labels();
+
+        if ($valueMap instanceof Closure) {
+            $valueMap = array_map($valueMap, array_combine($matches[1], $matches[1]));
+        }
+        if ($labelMap instanceof Closure) {
+            $labelMap = array_map($labelMap, array_combine($matches[1], $matches[1]));
+        }
+
+        foreach ($matches[1] as $methodName) {
+            $valueMap[$methodName]   = $valueMap[$methodName] ?? $methodName;
+            $labelMap[$methodName]   = $labelMap[$methodName] ?? $methodName;
+            $definition[$methodName] = new BaseEnumDefinition(
+                $methodName,
+                $valueMap[$methodName],
+                $labelMap[$methodName]
+            );
+        }
+
+        if (self::arrayHasDuplicates($valueMap)) {
+            throw new DuplicateValuesException();
+        }
+
+        if (self::arrayHasDuplicates($labelMap)) {
+            throw new DuplicateLabelsException();
+        }
+
+        return self::$definitionCache[static::class] = $definition;
+    }
+
+    /**
+     * Check if an array has duplicated values
+     *
+     * @param array $array
+     * @return boolean True if it has duplicated value.
+     */
+    private static function arrayHasDuplicates(array $array): bool
+    {
+        return count($array) > count(array_unique($array));
     }
 }

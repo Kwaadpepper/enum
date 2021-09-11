@@ -6,6 +6,12 @@ use BadMethodCallException;
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Kwaadpepper\Enum\Exceptions\NotImplementedException;
 
+/**
+ * This Base Enum will be routable with laravel.
+ * So you can use it with service container passing an
+ * enumeration as any route parameter directly as
+ * a controller parameter.
+ */
 abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
 {
     /**
@@ -35,20 +41,21 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      * @param  string|null  $field
      * @return \Illuminate\Database\Eloquent\Model|null
      */
+    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
     public function resolveRouteBinding($value, $field = null)
     {
         // try to cast numeric value first
         try {
             return static::make(is_numeric($value) ? intval($value) : $value);
         } catch (BadMethodCallException $e) {
+            // try string value after that
+            try {
+                return static::make($value);
+            } catch (BadMethodCallException $e) {
+                // could not find a suitable value
+                return null;
+            }
         }
-        // try string value after that
-        try {
-            return static::make($value);
-        } catch (BadMethodCallException $e) {
-        }
-        // could not find a suitable value
-        return null;
     }
 
     /**
