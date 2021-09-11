@@ -14,6 +14,7 @@ class EnumTest extends TestCase
     {
         $app->alias(Days::class, 'Days');
         $app->alias(ContactFormCivility::class, 'ContactFormCivility');
+        $app->alias(ForceStringsFromInteger::class, 'ForceStringsFromInteger');
     }
 
     /**
