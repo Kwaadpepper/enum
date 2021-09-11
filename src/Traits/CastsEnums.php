@@ -13,20 +13,6 @@ trait CastsEnums
 {
 
     /**
-     * The model's attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
-     * Propertis that should be casted to enum
-     *
-     * @var array
-     */
-    protected $enumCasts = [];
-
-    /**
      * Get a plain attribute (not a relationship).
      *
      * @param  string  $key
