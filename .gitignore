@@ -1,3 +1,4 @@
 workspace.code-workspace
 vendor
 .phpunit.result.cache
+.vscode/launch.json
