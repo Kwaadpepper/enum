@@ -14,6 +14,9 @@ use TypeError;
 /**
  * This Base Enum is the class which should
  * be extended to create an enumeration
+ *
+ * @property-read int|string $value The enum value, can be string or int
+ * @property-read string $label The enum label, is a string
  */
 abstract class BaseEnum implements JsonSerializable
 {
