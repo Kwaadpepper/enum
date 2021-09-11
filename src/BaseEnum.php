@@ -6,6 +6,7 @@ use BadMethodCallException;
 use JsonSerializable;
 use Kwaadpepper\Enum\Exceptions\DuplicateLabelsException;
 use Kwaadpepper\Enum\Exceptions\DuplicateValuesException;
+use Kwaadpepper\Enum\Exceptions\EnumNotRoutableException;
 use Kwaadpepper\Enum\Exceptions\UnknownEnumProperty;
 use ReflectionClass;
 use TypeError;
@@ -39,6 +40,25 @@ abstract class BaseEnum implements JsonSerializable
     // -- ENUM MAGIC METHODS --
 
     /**
+     * @param int|string $value
+     * @param string $label
+     * @throws TypeError If anything else than string or int is used for value.
+     * @throws EnumNotRoutableException If provided value are null
+     */
+    public function __construct($value = null, string $label = null)
+    {
+        /**
+         * This cannot be allowed, happens with laravel resolver
+         * when using BaseEnum instead of BaseEnumRoutable
+         */
+        if ($label === null and !is_subclass_of(static::class, BaseEnumRoutable::class)) {
+            throw new EnumNotRoutableException();
+        }
+        $this->label = $label;
+        $this->value = $value;
+    }
+
+    /**
      * @param string $attribute
      * @return int|string
      * @throws UnknownEnumProperty
@@ -60,6 +80,7 @@ abstract class BaseEnum implements JsonSerializable
      * @return static
      * @throws TypeError              If anything else than string or int is used.
      * @throws BadMethodCallException If a matching definition cannot be found.
+     * @throws EnumNotRoutableException If provided value are null
      */
     // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
     public static function __callStatic(string $name, array $arguments)
@@ -166,13 +187,11 @@ abstract class BaseEnum implements JsonSerializable
      * @return static
      * @throws TypeError              If anything else than string or int is used.
      * @throws BadMethodCallException If a matching definition cannot be found.
+     * @throws EnumNotRoutableException If provided value are null
      */
     public static function make($value): BaseEnum
     {
-        if (!(is_string($value) || is_int($value))) {
-            $enumClass = static::class;
-            throw new TypeError("Only string and integer are allowed values for enum $enumClass.");
-        }
+        self::assertValidValue($value);
 
         $definition = static::findDefinition($value);
 
@@ -183,9 +202,10 @@ abstract class BaseEnum implements JsonSerializable
             );
         }
 
-        $obj        = new static();
-        $obj->value = $definition->value;
-        $obj->label = $definition->label;
+        $obj = new static(
+            $definition->value,
+            $definition->label
+        );
 
         return $obj;
     }
@@ -280,5 +300,20 @@ abstract class BaseEnum implements JsonSerializable
     private static function arrayHasDuplicates(array $array): bool
     {
         return count($array) > count(array_unique($array));
+    }
+
+    /**
+     * Assert value is valid
+     *
+     * @param mixed $value
+     * @return void
+     * @throws TypeError If anything else than string or int is used.
+     */
+    private static function assertValidValue($value): void
+    {
+        if (!(is_string($value) || is_int($value))) {
+            $enumClass = static::class;
+            throw new TypeError("Only string and integer are allowed values for enum $enumClass.");
+        }
     }
 }

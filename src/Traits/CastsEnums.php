@@ -89,7 +89,7 @@ trait CastsEnums
     {
         if (
             $value === null or
-            $value instanceof BaseEnum or
+            (\is_object($value) and \is_subclass_of($value, BaseEnum::class)) or
             !isset($this->enumCasts[$key])
         ) {
             return $value;

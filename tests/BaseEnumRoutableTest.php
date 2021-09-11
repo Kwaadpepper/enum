@@ -5,6 +5,7 @@ namespace Kwaadpepper\Enum\Tests;
 use App\Http\Requests\PassDayRequest;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Kwaadpepper\Enum\Exceptions\EnumNotRoutableException;
 use Kwaadpepper\Enum\Exceptions\UnknownEnumClass;
 use Kwaadpepper\Enum\Rules\EnumIsValidRule;
 use Kwaadpepper\Enum\Tests\Enums\ContactFormCivility;
@@ -137,79 +138,80 @@ class BaseEnumRoutableTest extends TestCase
             return response()->json([$force]);
         })->middleware('bindings');
         $router->get('/notroutable/{notroutable}', function (NotRoutableEnum $notroutable) {
+            dd($notroutable);
             return response()->json([$notroutable]);
         })->middleware('bindings');
     }
 
     public function testRoutesDays()
     {
-        $response = $this->call('GET', sprintf('/days/%s', Days::none()->value));
+        $response = $this->json('GET', sprintf('/days/%s', Days::none()->value));
         $response->assertOk();
         $response->assertExactJson([Days::none()]);
-        $response = $this->call('GET', sprintf('/days/%s', Days::mon()->value));
+        $response = $this->json('GET', sprintf('/days/%s', Days::mon()->value));
         $response->assertOk();
         $response->assertExactJson([Days::mon()]);
     }
 
     public function testRoutesCivilities()
     {
-        $response = $this->call('GET', sprintf('/civilities/%s', ContactFormCivility::mme()->value));
+        $response = $this->json('GET', sprintf('/civilities/%s', ContactFormCivility::mme()->value));
         $response->assertOk();
         $response->assertExactJson([ContactFormCivility::mme()]);
     }
 
     public function testRoutesWithEnumIntString()
     {
-        $response = $this->call('GET', sprintf('/force/%s', ForceStringsFromInteger::valueB()->value));
+        $response = $this->json('GET', sprintf('/force/%s', ForceStringsFromInteger::valueB()->value));
         $response->assertOk();
         $response->assertExactJson([ForceStringsFromInteger::valueB()]);
     }
 
     public function testRoutesWithEnumNotFound()
     {
-        $response = $this->call('GET', '/force/6');
+        $response = $this->json('GET', '/force/6');
         $response->assertNotFound();
     }
 
     public function testRoutesWithEnumAsPrimaryKey()
     {
-        $response = $this->call('GET', sprintf('/reports/%s', Days::none()->value));
+        $response = $this->json('GET', sprintf('/reports/%s', Days::none()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/reports/%s', Days::mon()->value));
+        $response = $this->json('GET', sprintf('/reports/%s', Days::mon()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/reports/%s', Days::tue()->value));
+        $response = $this->json('GET', sprintf('/reports/%s', Days::tue()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/reports/%s', Days::fri()->value));
+        $response = $this->json('GET', sprintf('/reports/%s', Days::fri()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/reports/%s', 9999));
+        $response = $this->json('GET', sprintf('/reports/%s', 9999));
         $response->assertNotFound();
     }
 
     public function testRoutesWithEnumAsPrimaryKeyWithoutCastEnums()
     {
-        $response = $this->call('GET', sprintf('/alarms/%s', Days::none()->value));
+        $response = $this->json('GET', sprintf('/alarms/%s', Days::none()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/alarms/%s', Days::mon()->value));
+        $response = $this->json('GET', sprintf('/alarms/%s', Days::mon()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/alarms/%s', Days::tue()->value));
+        $response = $this->json('GET', sprintf('/alarms/%s', Days::tue()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/alarms/%s', Days::fri()->value));
+        $response = $this->json('GET', sprintf('/alarms/%s', Days::fri()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/alarms/%s', 9999));
+        $response = $this->json('GET', sprintf('/alarms/%s', 9999));
         $response->assertNotFound();
     }
 
     public function testRoutesWithEnumAsPrimaryKeyWithoutCastEnumsAndCast()
     {
-        $response = $this->call('GET', sprintf('/journals/%s', Days::none()->value));
+        $response = $this->json('GET', sprintf('/journals/%s', Days::none()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/journals/%s', Days::mon()->value));
+        $response = $this->json('GET', sprintf('/journals/%s', Days::mon()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/journals/%s', Days::tue()->value));
+        $response = $this->json('GET', sprintf('/journals/%s', Days::tue()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/journals/%s', Days::fri()->value));
+        $response = $this->json('GET', sprintf('/journals/%s', Days::fri()->value));
         $response->assertOk();
-        $response = $this->call('GET', sprintf('/journals/%s', 9999));
+        $response = $this->json('GET', sprintf('/journals/%s', 9999));
         $response->assertNotFound();
     }
 
@@ -223,7 +225,7 @@ class BaseEnumRoutableTest extends TestCase
 
     public function testRulesRequest()
     {
-        $response = $this->call('GET', sprintf('/day-validation?day=%s', Days::fri()->value));
+        $response = $this->json('GET', sprintf('/day-validation?day=%s', Days::fri()->value));
         $response->assertOk();
     }
 
@@ -242,6 +244,10 @@ class BaseEnumRoutableTest extends TestCase
     public function testNotRoutableEnum()
     {
         $response = $this->json('GET', sprintf('/notroutable/%s', '1'));
-        $response->assertOk();
+        $response->assertStatus(500);
+        $this->assertEquals(
+            new EnumNotRoutableException(),
+            $response->exception
+        );
     }
 }

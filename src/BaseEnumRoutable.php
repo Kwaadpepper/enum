@@ -4,7 +4,9 @@ namespace Kwaadpepper\Enum;
 
 use BadMethodCallException;
 use Illuminate\Contracts\Routing\UrlRoutable;
+use Kwaadpepper\Enum\Exceptions\EnumNotRoutableException;
 use Kwaadpepper\Enum\Exceptions\NotImplementedException;
+use TypeError;
 
 /**
  * This Base Enum will be routable with laravel.
@@ -54,11 +56,11 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
             $iValue = (is_numeric($value) and floatval(intval($value)) === floatval($value)) ?
                 (int)$value : $value;
             return static::make($iValue);
-        } catch (BadMethodCallException $e) {
+        } catch (BadMethodCallException | EnumNotRoutableException | TypeError $e) {
             // try string value after that
             try {
                 return static::make($value);
-            } catch (BadMethodCallException $e) {
+            } catch (BadMethodCallException | EnumNotRoutableException | TypeError $e) {
                 // could not find a suitable value
                 return null;
             }
