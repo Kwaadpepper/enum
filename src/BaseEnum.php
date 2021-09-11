@@ -3,7 +3,6 @@
 namespace Kwaadpepper\Enum;
 
 use BadMethodCallException;
-use Closure;
 use JsonSerializable;
 use Kwaadpepper\Enum\Exceptions\DuplicateLabelsException;
 use Kwaadpepper\Enum\Exceptions\DuplicateValuesException;
@@ -250,13 +249,6 @@ abstract class BaseEnum implements JsonSerializable
         $definition = [];
         $valueMap   = static::values();
         $labelMap   = static::labels();
-
-        if ($valueMap instanceof Closure) {
-            $valueMap = array_map($valueMap, array_combine($matches[1], $matches[1]));
-        }
-        if ($labelMap instanceof Closure) {
-            $labelMap = array_map($labelMap, array_combine($matches[1], $matches[1]));
-        }
 
         foreach ($matches[1] as $methodName) {
             $valueMap[$methodName]   = $valueMap[$methodName] ?? $methodName;
