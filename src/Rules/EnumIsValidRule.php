@@ -5,10 +5,11 @@ namespace Kwaadpepper\Enum\Rules;
 use BadMethodCallException;
 use TypeError;
 
+/**
+ * Custom Rule to validate an enum
+ */
 class EnumIsValidRule extends BaseEnumRule
 {
-
-    private $messageType = 0;
 
     /**
      * Determine if the validation rule passes.
@@ -25,11 +26,7 @@ class EnumIsValidRule extends BaseEnumRule
             $value = (is_numeric($value) and floatval(intval($value)) === floatval($value)) ?
                 (int)$value : $value;
             forward_static_call([$this->enumClass, 'make'], $value);
-        } catch (TypeError $e) {
-            $this->messageType = 1;
-            return false;
-        } catch (BadMethodCallException $e) {
-            $this->messageType = 2;
+        } catch (TypeError | BadMethodCallException $e) {
             return false;
         }
         return true;
@@ -41,16 +38,8 @@ class EnumIsValidRule extends BaseEnumRule
      */
     public function message(): string
     {
-        $message = null;
-        switch ($this->messageType) {
-            case 1:
-                $message = trans('enum::enum.isNotValid');
-                break;
-            case 2:
-                $message = trans('enum::enum.notInList', [
-                    'values' => implode(',', forward_static_call([$this->enumClass, 'toValues']))
-                ]);
-        }
-        return \is_string($message) ? $message : 'Invalid Enum';
+        return trans('enum::enum.notInList', [
+            'values' => implode(',', forward_static_call([$this->enumClass, 'toValues']))
+        ]);
     }
 }
