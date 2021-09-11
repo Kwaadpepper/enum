@@ -59,7 +59,7 @@ abstract class BaseEnum implements JsonSerializable
      * @param string $name
      * @param array $arguments
      * @return static
-     * @throws TypeError              If anything else thant string or int is used.
+     * @throws TypeError              If anything else than string or int is used.
      * @throws BadMethodCallException If a matching definition cannot be found.
      */
     // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
@@ -145,11 +145,11 @@ abstract class BaseEnum implements JsonSerializable
     }
 
     /**
-     * Get the enum definition
+     * Get the enum definition name
      *
-     * @return mixed|null
+     * @return string|null
      */
-    public function getDefinition()
+    public function getDefinition(): ?string
     {
         $className = static::class;
         foreach (self::$definitionCache[$className] as $definition => $enum) {
@@ -165,7 +165,7 @@ abstract class BaseEnum implements JsonSerializable
      *
      * @param string|int $value
      * @return static
-     * @throws TypeError              If anything else thant string or int is used.
+     * @throws TypeError              If anything else than string or int is used.
      * @throws BadMethodCallException If a matching definition cannot be found.
      */
     public static function make($value): BaseEnum
