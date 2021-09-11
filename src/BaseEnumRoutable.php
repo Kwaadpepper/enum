@@ -21,7 +21,7 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      */
     public function getRouteKey()
     {
-        return $this->value;
+        throw new NotImplementedException('getRouteKey not implemented, should not be used.');
     }
 
     /**
@@ -31,7 +31,7 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      */
     public function getRouteKeyName()
     {
-        throw new NotImplementedException('getRouteKeyName not implemented, should not be used');
+        throw new NotImplementedException('getRouteKeyName not implemented, should not be used.');
     }
 
     /**
@@ -69,17 +69,6 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      */
     public function resolveChildRouteBinding($childType, $value, $field)
     {
-        throw new NotImplementedException('resolveChildRouteBinding not implemented, should not be used');
-    }
-
-    /**
-     * Get the Enum name from class name
-     *
-     * @return string
-     */
-    public static function getEnumName()
-    {
-        $cls = explode('\\', static::class);
-        return array_pop($cls);
+        throw new NotImplementedException('resolveChildRouteBinding not implemented, should not be used.');
     }
 }
