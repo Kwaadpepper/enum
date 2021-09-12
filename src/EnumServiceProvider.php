@@ -3,6 +3,7 @@
 namespace Kwaadpepper\Enum;
 
 use Illuminate\Support\ServiceProvider;
+use Kwaadpepper\Enum\Console\CreateEnum;
 
 class EnumServiceProvider extends ServiceProvider
 {
@@ -18,5 +19,12 @@ class EnumServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/lang' => resource_path('lang/vendor/enum'),
         ]);
+
+        // Register the command if we are using the application via the CLI
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateEnum::class,
+            ]);
+        }
     }
 }
