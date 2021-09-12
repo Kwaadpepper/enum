@@ -1,4 +1,4 @@
-MIT License (!! includes CC BY-NC 3.0 parts please read Readme.md)
+MIT License
 
 Copyright (c) 2021 Jérémy Munsch
 
