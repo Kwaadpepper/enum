@@ -2,6 +2,11 @@
 
 All notable changes to `Enum` will be documented in this file.
 
+## **Version 2.1.1**
+
+### Fixed
+
+- Reintroduce getRouteKey to handle router with model + tests
 
 ## **Version 2.1.0**
 
