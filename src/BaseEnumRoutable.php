@@ -23,9 +23,7 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      */
     public function getRouteKey()
     {
-        // @codeCoverageIgnoreStart
-        throw new NotImplementedException('getRouteKey not implemented, should not be used.');
-        // @codeCoverageIgnoreEnd
+        return $this->value;
     }
 
     /**

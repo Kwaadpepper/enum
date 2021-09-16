@@ -118,7 +118,7 @@ class BaseEnumRoutableTest extends TestCase
     {
         $router->get('/journals/{journal}', function (Journal $journal) {
             return response()->json([$journal->day]);
-        })->middleware('bindings');
+        })->middleware('bindings')->name('journal.view');
         $router->get('/reports/{report}', function (Report $report) {
             return response()->json([$report->day]);
         })->middleware('bindings');
@@ -203,15 +203,16 @@ class BaseEnumRoutableTest extends TestCase
 
     public function testRoutesWithEnumAsPrimaryKeyWithoutCastEnumsAndCast()
     {
-        $response = $this->json('GET', sprintf('/journals/%s', Days::none()->value));
+        // This test includes getRouteKey method for coverage
+        $response = $this->json('GET', \route('journal.view', Days::none()));
         $response->assertOk();
-        $response = $this->json('GET', sprintf('/journals/%s', Days::mon()->value));
+        $response = $this->json('GET', \route('journal.view', Days::mon()));
         $response->assertOk();
-        $response = $this->json('GET', sprintf('/journals/%s', Days::tue()->value));
+        $response = $this->json('GET', \route('journal.view', Days::tue()));
         $response->assertOk();
-        $response = $this->json('GET', sprintf('/journals/%s', Days::fri()->value));
+        $response = $this->json('GET', \route('journal.view', Days::fri()));
         $response->assertOk();
-        $response = $this->json('GET', sprintf('/journals/%s', 9999));
+        $response = $this->json('GET', \route('journal.view', 9999));
         $response->assertNotFound();
     }
 
