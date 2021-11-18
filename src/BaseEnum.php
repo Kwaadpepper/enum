@@ -4,8 +4,10 @@ namespace Kwaadpepper\Enum;
 
 use BadMethodCallException;
 use JsonSerializable;
+use Kwaadpepper\Enum\Exceptions\DuplicateDefinitionException;
 use Kwaadpepper\Enum\Exceptions\DuplicateLabelsException;
 use Kwaadpepper\Enum\Exceptions\DuplicateValuesException;
+use Kwaadpepper\Enum\Exceptions\EmptyDefinitionException;
 use Kwaadpepper\Enum\Exceptions\EnumNotRoutableException;
 use Kwaadpepper\Enum\Exceptions\UnknownEnumProperty;
 use ReflectionClass;
@@ -270,6 +272,13 @@ abstract class BaseEnum implements JsonSerializable
         $valueMap   = static::values();
         $labelMap   = static::labels();
 
+        if (!count($matches[1])) {
+            throw new EmptyDefinitionException('You are missing defining enum definition in comments.');
+        }
+        if (self::arrayHasDuplicates($matches[1])) {
+            throw new DuplicateDefinitionException('You have duplicate values in comments enum definition.');
+        }
+
         foreach ($matches[1] as $methodName) {
             $valueMap[$methodName]   = $valueMap[$methodName] ?? $methodName;
             $labelMap[$methodName]   = $labelMap[$methodName] ?? $methodName;
@@ -281,11 +290,11 @@ abstract class BaseEnum implements JsonSerializable
         }
 
         if (self::arrayHasDuplicates($valueMap)) {
-            throw new DuplicateValuesException();
+            throw new DuplicateValuesException('You have duplicates values in enum values method.');
         }
 
         if (self::arrayHasDuplicates($labelMap)) {
-            throw new DuplicateLabelsException();
+            throw new DuplicateLabelsException('You have duplicates values in enum labels method.');
         }
 
         return self::$definitionCache[static::class] = $definition;
@@ -299,7 +308,13 @@ abstract class BaseEnum implements JsonSerializable
      */
     private static function arrayHasDuplicates(array $array): bool
     {
-        return count($array) > count(array_unique($array));
+        $uniqueVals = [];
+        foreach ($array as $value) {
+            if (!in_array($value, $uniqueVals, true)) {
+                $uniqueVals[] = $value;
+            }
+        }
+        return count($array) > count($uniqueVals);
     }
 
     /**
