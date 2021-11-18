@@ -2,6 +2,12 @@
 
 All notable changes to `Enum` will be documented in this file.
 
+## **Version 2.1.2**
+
+### Fixed
+
+- Fixed check for label duplicates or missing declaration
+
 ## **Version 2.1.1**
 
 ### Fixed
