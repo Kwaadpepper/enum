@@ -2,6 +2,14 @@
 
 All notable changes to `Enum` will be documented in this file.
 
+
+## **Version 2.1.3**
+
+### Fixed
+
+- Allow usage on php 7.4 and more as php 8 for cross compatibility
+- Bumped orchestra to 6 to allow unit test for all php versions
+
 ## **Version 2.1.2**
 
 ### Fixed
