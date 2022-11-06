@@ -41,3 +41,6 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test
+
+    - name: OSSF Scorecard action
+      uses: ossf/scorecard-action@v2.0.6
