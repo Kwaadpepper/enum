@@ -10,19 +10,20 @@ use TypeError;
  */
 class EnumIsValidRule extends BaseEnumRule
 {
-
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
+     * @param  string $attribute
      * @param  mixed  $value
-     * @return bool
+     * @return boolean
+     * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
+     * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
      */
-    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
     public function passes($attribute, $value): bool
     {
+        // phpcs:enable
         try {
-            // try cast to int if is int
+            // Try cast to int if is int.
             $value = (is_numeric($value) and floatval(intval($value)) === floatval($value)) ?
                 (int)$value : $value;
             forward_static_call([$this->enumClass, 'make'], $value);

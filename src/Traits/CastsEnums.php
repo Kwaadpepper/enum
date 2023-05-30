@@ -2,10 +2,8 @@
 
 namespace Kwaadpepper\Enum\Traits;
 
-use BadMethodCallException;
 use Illuminate\Support\Facades\Log;
 use Kwaadpepper\Enum\BaseEnum;
-use TypeError;
 
 /**
  * @property array $attributes Laravel model attributes
@@ -15,15 +13,16 @@ use TypeError;
  */
 trait CastsEnums
 {
-
     /**
      * Get a plain attribute (not a relationship).
      *
-     * @param  string  $key
+     * @param string $key
      * @return mixed
+     * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
      */
     public function getAttributeValue($key)
     {
+        // phpcs:enable
         $value = parent::getAttributeValue($key);
 
         if ($this->hasEnumCast($key)) {
@@ -36,18 +35,20 @@ trait CastsEnums
     /**
      * Set a given attribute on the model.
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $value
      * @return $this
+     * @throws \TypeError If cast fails.
+     * @throws \BadMethodCallException If cast fails.
      */
-    public function setAttribute($key, $value)
+    public function setAttribute(string $key, $value)
     {
         try {
             if ($enum = $this->castToEnum($key, $value) and $enum instanceof BaseEnum) {
                 $this->attributes[$key] = $enum->value;
                 return $this;
             }
-        } catch (TypeError | BadMethodCallException $e) {
+        } catch (\TypeError | \BadMethodCallException $e) {
             Log::debug(\sprintf('%s : trait CastEnums error, %s', __CLASS__, $e->getMessage()));
             if (in_array(config('app.env'), ['debug', 'testing'])) {
                 throw $e;
@@ -61,13 +62,15 @@ trait CastsEnums
     /**
      * Determine whether an attribute should be cast to a enum.
      *
-     * @param  string  $key
-     * @return bool
+     * @param string $key
+     * @return boolean
      */
-    public function hasEnumCast($key): bool
+    public function hasEnumCast(string $key): bool
     {
-        // This can happen if this trait is added to the model
-        // but no enum casts have been added yet
+        /**
+         * This can happen if this trait is added to the model
+         *  but no enum casts have been added yet.
+         */
         if ($this->enumCasts === null) {
             return false;
         }
@@ -79,13 +82,13 @@ trait CastsEnums
     /**
      * Casts the given key to an enum instance
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $value
      * @return \Kwaadpepper\Enum\BaseEnum|mixed|null
      * @throws TypeError — If anything else than string or int is used.
      * @throws BadMethodCallException — If a matching definition cannot be found.
      */
-    protected function castToEnum($key, $value)
+    protected function castToEnum(string $key, $value)
     {
         if (
             $value === null or
@@ -99,7 +102,7 @@ trait CastsEnums
             $value = $this->castAttribute($key, $value);
         }
 
-        // try cast to int
+        // Try cast to int.
         $value = (is_numeric($value) and floatval(intval($value)) === floatval($value)) ?
             (int)$value : $value;
 

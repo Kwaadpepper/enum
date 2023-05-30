@@ -11,6 +11,11 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  */
 final class DuplicatedLabels extends BaseEnumRoutable
 {
+    /**
+     * All labels
+     *
+     * @return array
+     */
     protected static function labels(): array
     {
         return [

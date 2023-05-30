@@ -8,7 +8,6 @@ use Kwaadpepper\Enum\Exceptions\UnknownEnumClass;
 
 abstract class BaseEnumRule implements Rule
 {
-
     /** @var string $enum */
     protected $enumClass;
 
@@ -18,6 +17,7 @@ abstract class BaseEnumRule implements Rule
      *
      * @param string $enumClass
      * @return void
+     * @throws \Kwaadpepper\Enum\Exceptions\UnknownEnumClass If the class passed is not an enum.
      */
     public function __construct(string $enumClass)
     {
@@ -30,11 +30,13 @@ abstract class BaseEnumRule implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
+     * @param  string $attribute
      * @param  mixed  $value
-     * @return bool
+     * @return boolean
+     * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
      */
     abstract public function passes($attribute, $value): bool;
+    // phpcs:enable
 
     /**
      * Get the validation error message.

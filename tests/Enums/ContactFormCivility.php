@@ -11,6 +11,11 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  */
 final class ContactFormCivility extends BaseEnumRoutable
 {
+    /**
+     * Output the value as a string
+     *
+     * @return string
+     */
     public function __toString(): string
     {
         return (string)$this->label;

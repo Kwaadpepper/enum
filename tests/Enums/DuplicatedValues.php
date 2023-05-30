@@ -11,6 +11,11 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  */
 final class DuplicatedValues extends BaseEnumRoutable
 {
+    /**
+     * All values
+     *
+     * @return array
+     */
     protected static function values(): array
     {
         return [

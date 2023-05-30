@@ -7,14 +7,29 @@ use Illuminate\Support\Facades\File;
 
 class CreateEnum extends Command
 {
-
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'make:enum';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Create a new enum class';
 
-    // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
+    /**
+     * Handle the command
+     *
+     * @return integer|void
+     * @phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
+     */
     public function handle()
     {
+        // phpcs:enable
         $validate = false;
         $info     = [
             'name' => false,
@@ -108,6 +123,13 @@ class CreateEnum extends Command
         $this->info(\sprintf('File generated %s', \app_path("Enums/$name.php")));
     }
 
+    /**
+     * Replace the class name
+     *
+     * @param string $templateEnum
+     * @param array  $info
+     * @return void
+     */
     private function replaceClassName(string &$templateEnum, array $info): void
     {
         $targetDefinition  = "class TemplateEnum";
@@ -116,6 +138,13 @@ class CreateEnum extends Command
         $templateEnum = str_replace($targetDefinition, $replaceDefinition, $templateEnum);
     }
 
+    /**
+     * Replace definition
+     *
+     * @param string $templateEnum
+     * @param array  $info
+     * @return void
+     */
     private function replaceDefinition(string &$templateEnum, array $info): void
     {
         $targetDefinition  = " * ##VALUES\n";
@@ -129,6 +158,13 @@ class CreateEnum extends Command
         $templateEnum = str_replace($targetDefinition, $replaceDefinition, $templateEnum);
     }
 
+    /**
+     * Insert lables and values
+     *
+     * @param string $templateEnum
+     * @param array  $info
+     * @return void
+     */
     private function insertLabelsAndValues(string &$templateEnum, array $info): void
     {
         $targetDefinition  = "    // ##OVERRIDE\n";

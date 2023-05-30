@@ -12,5 +12,4 @@ use Exception;
  */
 class DuplicateLabelsException extends Exception
 {
-  //
 }

@@ -29,37 +29,43 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
     /**
      * Get the route key for the model.
      *
+     * @phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
+     *
      * @return string
+     * @throws \Kwaadpepper\Enum\Exceptions\NotImplementedException GetRouteKeyName not implemented,
+     *                                                              should not be used.
      */
     public function getRouteKeyName()
     {
+        // phpcs:enable
         // @codeCoverageIgnoreStart
-        throw new NotImplementedException('getRouteKeyName not implemented, should not be used.');
+        throw new NotImplementedException('GetRouteKeyName not implemented, should not be used.');
         // @codeCoverageIgnoreEnd
     }
 
     /**
      * Retrieve the model for a bound value.
      *
-     * @param  mixed  $value
-     * @param  string|null  $field
+     * @param  mixed       $value
+     * @param  string|null $field
      * @return \Kwaadpepper\Enum\BaseEnum|null
+     * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
      */
-    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
     public function resolveRouteBinding($value, $field = null)
     {
-        // try to cast numeric value first
+        // phpcs:enable
+        // Try to cast numeric value first.
         try {
-            // try cast to int
+            // Try cast to int.
             $iValue = (is_numeric($value) and floatval(intval($value)) === floatval($value)) ?
                 (int)$value : $value;
             return static::make($iValue);
         } catch (BadMethodCallException | EnumNotRoutableException | TypeError $e) {
-            // try string value after that
+            // Try string value after that.
             try {
                 return static::make($value);
             } catch (BadMethodCallException | EnumNotRoutableException | TypeError $e) {
-                // could not find a suitable value
+                // Could not find a suitable value.
                 return null;
             }
         }
@@ -68,16 +74,21 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
     /**
      * Retrieve the child model for a bound value.
      *
-     * @param  string  $childType
-     * @param  mixed  $value
-     * @param  string|null  $field
+     * @phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
+     *
+     * @param  string      $childType
+     * @param  mixed       $value
+     * @param  string|null $field
      * @return \Illuminate\Database\Eloquent\Model|null
-     * @throws NotImplementedException
+     * @throws \Kwaadpepper\Enum\Exceptions\NotImplementedException ResolveChildRouteBinding not implemented,
+     *                                                              should not be used.
+     * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
      */
     public function resolveChildRouteBinding($childType, $value, $field)
     {
+        // phpcs:enable
         // @codeCoverageIgnoreStart
-        throw new NotImplementedException('resolveChildRouteBinding not implemented, should not be used.');
+        throw new NotImplementedException('ResolveChildRouteBinding not implemented, should not be used.');
         // @codeCoverageIgnoreEnd
     }
 }

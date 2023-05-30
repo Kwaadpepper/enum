@@ -2,16 +2,12 @@
 
 namespace Kwaadpepper\Enum;
 
-use BadMethodCallException;
-use JsonSerializable;
 use Kwaadpepper\Enum\Exceptions\DuplicateDefinitionException;
 use Kwaadpepper\Enum\Exceptions\DuplicateLabelsException;
 use Kwaadpepper\Enum\Exceptions\DuplicateValuesException;
 use Kwaadpepper\Enum\Exceptions\EmptyDefinitionException;
 use Kwaadpepper\Enum\Exceptions\EnumNotRoutableException;
 use Kwaadpepper\Enum\Exceptions\UnknownEnumProperty;
-use ReflectionClass;
-use TypeError;
 
 /**
  * This Base Enum is the class which should
@@ -20,18 +16,15 @@ use TypeError;
  * @property-read int|string $value The enum value, can be string or int
  * @property-read string $label The enum label, is a string
  */
-abstract class BaseEnum implements JsonSerializable
+abstract class BaseEnum implements \JsonSerializable
 {
-
     /**
-     * @var string|int
-     * @readonly
+     * @var string|integer
      */
     protected $value;
 
     /**
      * @var string
-     * @readonly
      */
     protected $label;
 
@@ -42,13 +35,16 @@ abstract class BaseEnum implements JsonSerializable
     // -- ENUM MAGIC METHODS --
 
     /**
-     * @param int|string $value
-     * @param string $label
-     * @throws TypeError If anything else than string or int is used for value.
-     * @throws EnumNotRoutableException If provided value are null
+     * @param integer|string $value
+     * @param string         $label
+     * @throws \TypeError                                            If anything else than string or int
+     *                                                               is used for value.
+     * @throws \Kwaadpepper\Enum\Exceptions\EnumNotRoutableException If provided value are null.
+     * @phpcs:disable Squiz.Commenting.FunctionCommentThrowTag.WrongNumber
      */
     public function __construct($value = null, string $label = null)
     {
+        // phpcs:ignore
         /**
          * This cannot be allowed, happens with laravel resolver
          * when using BaseEnum instead of BaseEnumRoutable
@@ -62,8 +58,8 @@ abstract class BaseEnum implements JsonSerializable
 
     /**
      * @param string $attribute
-     * @return int|string
-     * @throws UnknownEnumProperty
+     * @return integer|string
+     * @throws \Kwaadpepper\Enum\Exceptions\UnknownEnumProperty As it could not be found.
      */
     public function __get(string $attribute)
     {
@@ -78,20 +74,22 @@ abstract class BaseEnum implements JsonSerializable
 
     /**
      * @param string $name
-     * @param array $arguments
+     * @param array  $arguments
      * @return static
-     * @throws TypeError              If anything else than string or int is used.
-     * @throws BadMethodCallException If a matching definition cannot be found.
-     * @throws EnumNotRoutableException If provided value are null
+     * @throws \TypeError              If anything else than string or int is used.
+     * @throws \BadMethodCallException If a matching definition cannot be found.
+     * @throws \Kwaadpepper\Enum\Exceptions\EnumNotRoutableException If provided value are null.
+     * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
      */
-    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed
     public static function __callStatic(string $name, array $arguments)
     {
+        // phpcs:enable
         return static::make($name);
     }
 
     /**
      * Output the value as a string
+     *
      * @return string
      */
     public function __toString(): string
@@ -149,7 +147,8 @@ abstract class BaseEnum implements JsonSerializable
     // -- DEFINITON METHODS --
 
     /**
-     * @return string[]|int[]|Closure
+     * Get all values
+     *
      * @return array<string, string|int> | Closure(string):(int|string)
      */
     protected static function values()
@@ -158,7 +157,8 @@ abstract class BaseEnum implements JsonSerializable
     }
 
     /**
-     * @return string[]|Closure
+     * Get all labels
+     *
      * @return array<string, string> | Closure(string):string
      */
     protected static function labels()
@@ -185,21 +185,23 @@ abstract class BaseEnum implements JsonSerializable
     /**
      * Parse a value to create its corresponding enumeration value.
      *
-     * @param string|int $value
+     * @param string|integer $value
      * @return static
      * @throws TypeError              If anything else than string or int is used.
-     * @throws BadMethodCallException If a matching definition cannot be found.
-     * @throws EnumNotRoutableException If provided value are null
+     * @throws \BadMethodCallException If a matching definition cannot be found.
+     * @throws \Kwaadpepper\Enum\Exceptions\EnumNotRoutableException If provided value are null.
+     * @phpcs:disable Squiz.Commenting.FunctionCommentThrowTag.WrongNumber
      */
     public static function make($value): BaseEnum
     {
+        // phpcs:enable
         self::assertValidValue($value);
 
         $definition = static::findDefinition($value);
 
         if ($definition === null) {
             $enumClass = static::class;
-            throw new BadMethodCallException(
+            throw new \BadMethodCallException(
                 "There's no value $value defined for enum $enumClass, consider adding it in the docblock definition."
             );
         }
@@ -212,16 +214,19 @@ abstract class BaseEnum implements JsonSerializable
         return $obj;
     }
 
-    public function equals(BaseEnum ...$others): bool
+    /**
+     * Test if an enum values is equal to another
+     *
+     * @param \Kwaadpepper\Enum\BaseEnum $other
+     * @return boolean
+     */
+    public function equals(BaseEnum $other): bool
     {
-        foreach ($others as $other) {
-            // @phpcs:disable PSR2.ControlStructures.ControlStructureSpacing.SpacingAfterOpenBrace
-            if (
-                get_class($this) === get_class($other)
-                && $this->value === $other->value
-            ) {
-                return true;
-            }
+        if (
+            get_class($this) === get_class($other)
+            && $this->value === $other->value
+        ) {
+            return true;
         }
         return false;
     }
@@ -241,7 +246,7 @@ abstract class BaseEnum implements JsonSerializable
     // -- PRIVATE METHODS --
 
     /**
-     * @param string|int $input
+     * @param string|integer $input
      * @return \Kwaadpepper\Enum\BaseEnumDefinition|null
      */
     private static function findDefinition($input): ?BaseEnumDefinition
@@ -255,15 +260,22 @@ abstract class BaseEnum implements JsonSerializable
     }
 
     /**
+     * Resolve enum defintion
+     *
      * @return \Kwaadpepper\Enum\BaseEnumDefinition[]
+     * @throws \Kwaadpepper\Enum\Exceptions\EmptyDefinitionException If there is any.
+     * @throws \Kwaadpepper\Enum\Exceptions\DuplicateValuesException If there is any in labels map.
+     * @throws \Kwaadpepper\Enum\Exceptions\DuplicateValuesException If there is any in values map.
+     * @phpcs:disable Squiz.Commenting.FunctionCommentThrowTag.WrongNumber
      */
     private static function resolveDefinition(): array
     {
+        // phpcs:enable
         if (isset(self::$definitionCache[static::class])) {
             return self::$definitionCache[static::class];
         }
 
-        $reflectionClass = new ReflectionClass(static::class);
+        $reflectionClass = new \ReflectionClass(static::class);
         $docComment      = $reflectionClass->getDocComment();
 
         preg_match_all('/@method\s+static\s+self\s+([\w_]+)\(\)/', $docComment, $matches);
@@ -297,7 +309,9 @@ abstract class BaseEnum implements JsonSerializable
             throw new DuplicateLabelsException('You have duplicates values in enum labels method.');
         }
 
-        return self::$definitionCache[static::class] = $definition;
+        self::$definitionCache[static::class] = $definition;
+
+        return self::$definitionCache[static::class];
     }
 
     /**
@@ -322,13 +336,13 @@ abstract class BaseEnum implements JsonSerializable
      *
      * @param mixed $value
      * @return void
-     * @throws TypeError If anything else than string or int is used.
+     * @throws \TypeError If anything else than string or int is used.
      */
     private static function assertValidValue($value): void
     {
         if (!(is_string($value) || is_int($value))) {
             $enumClass = static::class;
-            throw new TypeError("Only string and integer are allowed values for enum $enumClass.");
+            throw new \TypeError("Only string and integer are allowed values for enum $enumClass.");
         }
     }
 }

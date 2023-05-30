@@ -11,6 +11,11 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  */
 final class ForceStringsFromInteger extends BaseEnumRoutable
 {
+    /**
+     * All values
+     *
+     * @return array
+     */
     protected static function values(): array
     {
         return [

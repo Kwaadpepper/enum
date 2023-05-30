@@ -16,18 +16,19 @@ use Kwaadpepper\Enum\Tests\Models\Alarm;
 use Kwaadpepper\Enum\Tests\Models\Journal;
 use Kwaadpepper\Enum\Tests\Models\Report;
 use Orchestra\Testbench\TestCase;
-use SplFileObject;
 
 class BaseEnumRoutableTest extends TestCase
 {
     /**
      * Defines aliases
      *
-     * @param [type] $app
+     * @param \Illuminate\Foundation\Application $app
      * @return void
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
      */
     protected function getPackageAliases($app)
     {
+        // phpcs:enable
         $app->alias(Alarm::class, 'Alarm');
         $app->alias(Journal::class, 'Journal');
         $app->alias(Report::class, 'Report');
@@ -40,13 +41,15 @@ class BaseEnumRoutableTest extends TestCase
     /**
      * Get package providers.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  \Illuminate\Foundation\Application $app
      *
      * @return array
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
+     * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
      */
-    // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
     protected function getPackageProviders($app)
     {
+        // phpcs:enable
         return [
             'Kwaadpepper\Enum\EnumServiceProvider',
         ];
@@ -110,12 +113,14 @@ class BaseEnumRoutableTest extends TestCase
     /**
      * Define routes setup.
      *
-     * @param  \Illuminate\Routing\Router  $router
+     * @param \Illuminate\Routing\Router $router
      *
      * @return void
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
      */
     protected function defineRoutes($router)
     {
+        // phpcs:enable
         $router->get('/journals/{journal}', function (Journal $journal) {
             return response()->json([$journal->day]);
         })->middleware('bindings')->name('journal.view');
@@ -143,6 +148,11 @@ class BaseEnumRoutableTest extends TestCase
         })->middleware('bindings');
     }
 
+    /**
+     * Test route values
+     *
+     * @return void
+     */
     public function testRoutesDays()
     {
         $response = $this->json('GET', sprintf('/days/%s', Days::none()->value));
@@ -153,6 +163,11 @@ class BaseEnumRoutableTest extends TestCase
         $response->assertExactJson([Days::mon()]);
     }
 
+    /**
+     * Test route with example civilities
+     *
+     * @return void
+     */
     public function testRoutesCivilities()
     {
         $response = $this->json('GET', sprintf('/civilities/%s', ContactFormCivility::mme()->value));
@@ -160,6 +175,11 @@ class BaseEnumRoutableTest extends TestCase
         $response->assertExactJson([ContactFormCivility::mme()]);
     }
 
+    /**
+     * Test route with enum as string
+     *
+     * @return void
+     */
     public function testRoutesWithEnumIntString()
     {
         $response = $this->json('GET', sprintf('/force/%s', ForceStringsFromInteger::valueB()->value));
@@ -167,12 +187,22 @@ class BaseEnumRoutableTest extends TestCase
         $response->assertExactJson([ForceStringsFromInteger::valueB()]);
     }
 
+    /**
+     * Test route with enum not found
+     *
+     * @return void
+     */
     public function testRoutesWithEnumNotFound()
     {
         $response = $this->json('GET', '/force/6');
         $response->assertNotFound();
     }
 
+    /**
+     * Test routes with enums as pk
+     *
+     * @return void
+     */
     public function testRoutesWithEnumAsPrimaryKey()
     {
         $response = $this->json('GET', sprintf('/reports/%s', Days::none()->value));
@@ -187,6 +217,11 @@ class BaseEnumRoutableTest extends TestCase
         $response->assertNotFound();
     }
 
+    /**
+     * Test routes with enum as pk without cast enums
+     *
+     * @return void
+     */
     public function testRoutesWithEnumAsPrimaryKeyWithoutCastEnums()
     {
         $response = $this->json('GET', sprintf('/alarms/%s', Days::none()->value));
@@ -201,9 +236,15 @@ class BaseEnumRoutableTest extends TestCase
         $response->assertNotFound();
     }
 
+    /**
+     * Test routes wit henum as pk without cast enums
+     *
+     * ! This test includes getRouteKey method for coverage
+     *
+     * @return void
+     */
     public function testRoutesWithEnumAsPrimaryKeyWithoutCastEnumsAndCast()
     {
-        // This test includes getRouteKey method for coverage
         $response = $this->json('GET', \route('journal.view', Days::none()));
         $response->assertOk();
         $response = $this->json('GET', \route('journal.view', Days::mon()));
@@ -216,6 +257,11 @@ class BaseEnumRoutableTest extends TestCase
         $response->assertNotFound();
     }
 
+    /**
+     * Test enum is valid rule
+     *
+     * @return void
+     */
     public function testRules()
     {
         $rule = new EnumIsValidRule(Days::class);
@@ -224,24 +270,45 @@ class BaseEnumRoutableTest extends TestCase
         $this->assertFalse($rule->passes('day', Days::mon()));
     }
 
+    /**
+     * Test route with enum
+     *
+     * @return void
+     */
     public function testRulesRequest()
     {
         $response = $this->json('GET', sprintf('/day-validation?day=%s', Days::fri()->value));
         $response->assertOk();
     }
 
+    /**
+     * Test route fails on non enum
+     *
+     * @return void
+     */
     public function testRulesRequestFail()
     {
         $response = $this->json('GET', sprintf('/day-validation?day=%s', '"!:'));
         $response->assertJsonValidationErrors('day');
     }
 
+    /**
+     * Test Enum validate enum class on non enum class
+     *
+     * @return void
+     */
     public function testRulesRequestInvalid()
     {
         $this->expectException(UnknownEnumClass::class);
-        new EnumIsValidRule(SplFileObject::class);
+        new EnumIsValidRule(\SplFileObject::class);
     }
 
+
+    /**
+     * Test enum is not routable
+     *
+     * @return void
+     */
     public function testNotRoutableEnum()
     {
         $response = $this->json('GET', sprintf('/notroutable/%s', '1'));

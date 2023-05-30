@@ -11,6 +11,11 @@ use Kwaadpepper\Enum\BaseEnum;
  */
 final class NotRoutableEnum extends BaseEnum
 {
+    /**
+     * All values
+     *
+     * @return array
+     */
     protected static function values(): array
     {
         return [

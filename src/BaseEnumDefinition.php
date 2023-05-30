@@ -8,8 +8,7 @@ namespace Kwaadpepper\Enum;
  */
 class BaseEnumDefinition
 {
-
-    /** @var string|int */
+    /** @var string|integer */
     public $value;
 
     /** @var string */
@@ -19,9 +18,9 @@ class BaseEnumDefinition
     private $methodName;
 
     /**
-     * @param string $methodName
-     * @param string|int $value
-     * @param string $label
+     * @param string         $methodName
+     * @param string|integer $value
+     * @param string         $label
      */
     public function __construct(string $methodName, $value, string $label)
     {
@@ -31,8 +30,8 @@ class BaseEnumDefinition
     }
 
     /**
-     * @param string|int $input
-     * @return bool
+     * @param string|integer $input
+     * @return boolean
      */
     public function equals($input): bool
     {

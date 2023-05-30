@@ -20,7 +20,7 @@ class EnumServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/lang' => resource_path('lang/vendor/enum'),
         ]);
 
-        // Register the command if we are using the application via the CLI
+        // Register the command if we are using the application via the CLI.
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateEnum::class,

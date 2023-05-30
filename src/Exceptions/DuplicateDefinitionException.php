@@ -12,5 +12,4 @@ use Exception;
  */
 class DuplicateDefinitionException extends Exception
 {
-    //
 }

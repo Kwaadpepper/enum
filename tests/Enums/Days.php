@@ -16,6 +16,11 @@ use Kwaadpepper\Enum\BaseEnumRoutable;
  */
 final class Days extends BaseEnumRoutable
 {
+    /**
+     * All values
+     *
+     * @return array
+     */
     protected static function values(): array
     {
         return [
@@ -30,6 +35,11 @@ final class Days extends BaseEnumRoutable
         ];
     }
 
+    /**
+     * All labels
+     *
+     * @return array
+     */
     protected static function labels(): array
     {
         return [
@@ -44,6 +54,11 @@ final class Days extends BaseEnumRoutable
         ];
     }
 
+    /**
+     * Output the value as a string
+     *
+     * @return string
+     */
     public function __toString(): string
     {
         return (string)$this->label;
@@ -52,7 +67,7 @@ final class Days extends BaseEnumRoutable
     /**
      * Checks if days contain this day
      *
-     * @param int $days
+     * @param integer $days
      * @return boolean
      */
     public function has(int $days)

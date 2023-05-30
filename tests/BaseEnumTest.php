@@ -19,6 +19,11 @@ use TypeError;
 
 class BaseEnumTest extends TestCase
 {
+    /**
+     * Test enum
+     *
+     * @return void
+     */
     public function testEnum()
     {
         $mon = Days::mon();
@@ -28,13 +33,13 @@ class BaseEnumTest extends TestCase
         Days::toLabels();
         json_encode($tue);
 
-        // basic tests
+        // Basic tests.
         $this->assertEquals('Monday', $mon->label, 'Days::mon()->value should be equals to `Monday`');
         $this->assertEquals(2, $mon->value, 'Days::mon()->value should be equals to `2`');
-        $this->assertClassHasAttribute('value', Days::class, 'Days should have a value property');
-        $this->assertClassHasAttribute('label', Days::class, 'Days should have a label property');
+        $this->assertTrue(\property_exists(Days::class, 'value'), 'Days should have a value property');
+        $this->assertTrue(\property_exists(Days::class, 'label'), 'Days should have a label property');
 
-        // undef prop test
+        // Undef prop test.
         $exception = null;
         try {
             $mon->propthatdontexists;
@@ -92,18 +97,32 @@ class BaseEnumTest extends TestCase
         );
     }
 
+    /**
+     * Test cannot assign an enum value
+     *
+     * @return void
+     */
     public function testCannotAssignAnEnumValue()
     {
-        $this->expectError();
+        $this->setUp();
+        $this->expectException(\Error::class);
         $enum        = Days::mon();
         $enum->value = 'anything';
+        $this->tearDown();
     }
 
+    /**
+     * Test cannot assign an enum label
+     *
+     * @return void
+     */
     public function testCannotAssignAnEnumLabel()
     {
-        $this->expectError();
+        $this->setUp();
+        $this->expectException(\Error::class);
         $enum        = Days::mon();
         $enum->label = 'anything';
+        $this->tearDown();
     }
 
     /**
@@ -125,6 +144,11 @@ class BaseEnumTest extends TestCase
         );
     }
 
+    /**
+     * Test setting enum value onto model prop
+     *
+     * @return void
+     */
     public function testValidEnumSet()
     {
         $this->expectNotToPerformAssertions();
@@ -133,6 +157,11 @@ class BaseEnumTest extends TestCase
         $report->day = Days::mon()->value;
     }
 
+    /**
+     * Test setting invalid enum value onto model prop
+     *
+     * @return void
+     */
     public function testInvalidEnumSet()
     {
         $this->expectException(BadMethodCallException::class);
@@ -140,6 +169,11 @@ class BaseEnumTest extends TestCase
         $report->day = Days::mon()->label;
     }
 
+    /**
+     * Test setting prop enum with float (invalid)
+     *
+     * @return void
+     */
     public function testInvalidEnumSetWithFloat()
     {
         $this->expectException(TypeError::class);
@@ -147,6 +181,11 @@ class BaseEnumTest extends TestCase
         $report->day = 0.1;
     }
 
+    /**
+     * Test setting invalid enum prop with object
+     *
+     * @return void
+     */
     public function testInvalidEnumSetNotAuthorizedType()
     {
         $this->expectException(TypeError::class);
@@ -154,6 +193,11 @@ class BaseEnumTest extends TestCase
         $report->day = new stdClass();
     }
 
+    /**
+     * Test setting enum prop with null as valid
+     *
+     * @return void
+     */
     public function testInvalidEnumCanSetNull()
     {
         $this->expectNotToPerformAssertions();
@@ -161,15 +205,50 @@ class BaseEnumTest extends TestCase
         $report->day = null;
     }
 
+    /**
+     * Test enum has duplicated values
+     *
+     * @return void
+     */
     public function testDuplicatedValues()
     {
         $this->expectException(DuplicateValuesException::class);
         DuplicatedValues::one();
     }
 
+    /**
+     * Test enm has duplicated labels
+     *
+     * @return void
+     */
     public function testDuplicatedLabels()
     {
         $this->expectException(DuplicateLabelsException::class);
         DuplicatedLabels::one();
+    }
+
+    /**
+     * Setup custom phpunit catch for deprecated error cathing.
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        set_error_handler(
+            static function ($errno, $errstr) {
+                throw new \Exception($errstr, $errno);
+            },
+            E_ALL
+        );
+    }
+
+    /**
+     * Restore phpunit handler
+     *
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        restore_error_handler();
     }
 }
