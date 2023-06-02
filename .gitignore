@@ -3,4 +3,5 @@ vendor
 .phpunit.result.cache
 .phpunit.cache
 .vscode/launch.json
+composer.lock
 build
