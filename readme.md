@@ -2,7 +2,7 @@
 ![GitHub](https://img.shields.io/github/license/Kwaadpepper/enum?style=flat-square)
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Kwaadpepper/enum/PHP%20Composer?style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Kwaadpepper/enum/php.yml?branch=master?style=flat-square)
 
 This package goal is to provide a complete solution to lack a long time php weakness : it do not have any `enum` support.
 This will change with [**php 8 enums proposition**](https://php.watch/versions/8.1/enums). In the mean time we still a support for this allowing us to generate generic and extendable applications (instead of have singletons sql tables..).
