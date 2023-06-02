@@ -2,6 +2,8 @@
 
 All notable changes to `Enum` will be documented in this file.
 
+## **Version 3.0.0**
+- Changed use of php8.2 and more only For laravel 10 usage
 
 ## **Version 2.1.3**
 

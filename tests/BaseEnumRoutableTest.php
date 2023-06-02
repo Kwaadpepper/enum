@@ -20,6 +20,33 @@ use Orchestra\Testbench\TestCase;
 class BaseEnumRoutableTest extends TestCase
 {
     /**
+     * Setup custom phpunit catch for deprecated error cathing.
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        set_error_handler(
+            static function ($errno, $errstr) {
+                throw new \Exception($errstr, $errno);
+            },
+            E_ALL
+        );
+        parent::setUp();
+    }
+
+    /**
+     * Restore phpunit handler
+     *
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        restore_error_handler();
+        parent::tearDown();
+    }
+
+    /**
      * Defines aliases
      *
      * @param \Illuminate\Foundation\Application $app
@@ -51,7 +78,8 @@ class BaseEnumRoutableTest extends TestCase
     {
         // phpcs:enable
         return [
-            'Kwaadpepper\Enum\EnumServiceProvider',
+            \Illuminate\Log\LogServiceProvider::class,
+            \Kwaadpepper\Enum\EnumServiceProvider::class,
         ];
     }
 
@@ -123,29 +151,28 @@ class BaseEnumRoutableTest extends TestCase
         // phpcs:enable
         $router->get('/journals/{journal}', function (Journal $journal) {
             return response()->json([$journal->day]);
-        })->middleware('bindings')->name('journal.view');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class)->name('journal.view');
         $router->get('/reports/{report}', function (Report $report) {
             return response()->json([$report->day]);
-        })->middleware('bindings');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class);
         $router->get('/alarms/{alarm}', function (Alarm $alarm) {
             return response()->json([$alarm->day]);
-        })->middleware('bindings');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class);
         $router->get('/days/{day}', function (Days $day) {
             return response()->json([$day]);
-        })->middleware('bindings');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class);
         $router->get('/day-validation', function (PassDayRequest $request) {
             return response()->json([Days::make((int)$request->day)]);
-        })->middleware('bindings');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class);
         $router->get('/civilities/{civility}', function (ContactFormCivility $civility) {
             return response()->json([$civility]);
-        })->middleware('bindings');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class);
         $router->get('/force/{force}', function (ForceStringsFromInteger $force) {
             return response()->json([$force]);
-        })->middleware('bindings');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class);
         $router->get('/notroutable/{notroutable}', function (NotRoutableEnum $notroutable) {
-            dd($notroutable);
             return response()->json([$notroutable]);
-        })->middleware('bindings');
+        })->middleware(\Illuminate\Routing\Middleware\SubstituteBindings::class);
     }
 
     /**

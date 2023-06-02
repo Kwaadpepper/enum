@@ -40,9 +40,12 @@ trait CastsEnums
      * @return $this
      * @throws \TypeError If cast fails.
      * @throws \BadMethodCallException If cast fails.
+     * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
      */
-    public function setAttribute(string $key, $value)
+    public function setAttribute($key, $value)
     {
+        // phpcs:enable
         try {
             if ($enum = $this->castToEnum($key, $value) and $enum instanceof BaseEnum) {
                 $this->attributes[$key] = $enum->value;
@@ -88,7 +91,7 @@ trait CastsEnums
      * @throws TypeError — If anything else than string or int is used.
      * @throws BadMethodCallException — If a matching definition cannot be found.
      */
-    protected function castToEnum(string $key, $value)
+    protected function castToEnum(string $key, mixed $value)
     {
         if (
             $value === null or

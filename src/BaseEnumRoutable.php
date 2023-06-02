@@ -51,7 +51,7 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      * @return \Kwaadpepper\Enum\BaseEnum|null
      * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassAfterLastUsed
      */
-    public function resolveRouteBinding($value, $field = null)
+    public function resolveRouteBinding(mixed $value, $field = null)
     {
         // phpcs:enable
         // Try to cast numeric value first.
@@ -83,6 +83,7 @@ abstract class BaseEnumRoutable extends BaseEnum implements UrlRoutable
      * @throws \Kwaadpepper\Enum\Exceptions\NotImplementedException ResolveChildRouteBinding not implemented,
      *                                                              should not be used.
      * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
      */
     public function resolveChildRouteBinding($childType, $value, $field)
     {

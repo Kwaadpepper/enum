@@ -338,7 +338,7 @@ abstract class BaseEnum implements \JsonSerializable
      * @return void
      * @throws \TypeError If anything else than string or int is used.
      */
-    private static function assertValidValue($value): void
+    private static function assertValidValue(mixed $value): void
     {
         if (!(is_string($value) || is_int($value))) {
             $enumClass = static::class;

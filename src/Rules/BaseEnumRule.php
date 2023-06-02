@@ -34,6 +34,7 @@ abstract class BaseEnumRule implements Rule
      * @param  mixed  $value
      * @return boolean
      * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
      */
     abstract public function passes($attribute, $value): bool;
     // phpcs:enable

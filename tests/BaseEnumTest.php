@@ -2,8 +2,6 @@
 
 namespace Kwaadpepper\Enum\Tests;
 
-use BadMethodCallException;
-use Exception;
 use Kwaadpepper\Enum\Exceptions\DuplicateLabelsException;
 use Kwaadpepper\Enum\Exceptions\DuplicateValuesException;
 use Kwaadpepper\Enum\Exceptions\UnknownEnumProperty;
@@ -13,9 +11,6 @@ use Kwaadpepper\Enum\Tests\Enums\DuplicatedValues;
 use Kwaadpepper\Enum\Tests\Enums\ForceStringsFromInteger;
 use Kwaadpepper\Enum\Tests\Models\Report;
 use Orchestra\Testbench\TestCase;
-use ReflectionClass;
-use stdClass;
-use TypeError;
 
 class BaseEnumTest extends TestCase
 {
@@ -43,7 +38,7 @@ class BaseEnumTest extends TestCase
         $exception = null;
         try {
             $mon->propthatdontexists;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $exception = $e;
         } finally {
             $this->assertEquals(
@@ -104,11 +99,9 @@ class BaseEnumTest extends TestCase
      */
     public function testCannotAssignAnEnumValue()
     {
-        $this->setUp();
         $this->expectException(\Error::class);
         $enum        = Days::mon();
         $enum->value = 'anything';
-        $this->tearDown();
     }
 
     /**
@@ -118,11 +111,9 @@ class BaseEnumTest extends TestCase
      */
     public function testCannotAssignAnEnumLabel()
     {
-        $this->setUp();
         $this->expectException(\Error::class);
         $enum        = Days::mon();
         $enum->label = 'anything';
-        $this->tearDown();
     }
 
     /**
@@ -133,7 +124,7 @@ class BaseEnumTest extends TestCase
     public function testHackingEnumValueCouldConfuseCache()
     {
         $enum     = Days::mon();
-        $refClass = new ReflectionClass($enum);
+        $refClass = new \ReflectionClass($enum);
         $property = $refClass->getProperty('value');
         $property->setAccessible(true);
         $property->setValue($enum, 'anything');
@@ -164,7 +155,7 @@ class BaseEnumTest extends TestCase
      */
     public function testInvalidEnumSet()
     {
-        $this->expectException(BadMethodCallException::class);
+        $this->expectException(\BadMethodCallException::class);
         $report      = new Report();
         $report->day = Days::mon()->label;
     }
@@ -176,7 +167,7 @@ class BaseEnumTest extends TestCase
      */
     public function testInvalidEnumSetWithFloat()
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(\TypeError::class);
         $report      = new Report();
         $report->day = 0.1;
     }
@@ -188,9 +179,9 @@ class BaseEnumTest extends TestCase
      */
     public function testInvalidEnumSetNotAuthorizedType()
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(\TypeError::class);
         $report      = new Report();
-        $report->day = new stdClass();
+        $report->day = new \stdClass();
     }
 
     /**
@@ -225,30 +216,5 @@ class BaseEnumTest extends TestCase
     {
         $this->expectException(DuplicateLabelsException::class);
         DuplicatedLabels::one();
-    }
-
-    /**
-     * Setup custom phpunit catch for deprecated error cathing.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        set_error_handler(
-            static function ($errno, $errstr) {
-                throw new \Exception($errstr, $errno);
-            },
-            E_ALL
-        );
-    }
-
-    /**
-     * Restore phpunit handler
-     *
-     * @return void
-     */
-    public function tearDown(): void
-    {
-        restore_error_handler();
     }
 }

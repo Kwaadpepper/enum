@@ -16,6 +16,7 @@ class EnumIsValidRule extends BaseEnumRule
      * @param  string $attribute
      * @param  mixed  $value
      * @return boolean
+     * @phpcs:disable Squiz.Commenting.FunctionComment.TypeHintMissing
      * @phpcs:disable Squiz.Commenting.FunctionComment.ScalarTypeHintMissing
      * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
      */
