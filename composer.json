@@ -47,7 +47,7 @@
         "post-autoload-dump": [
             "@php ./vendor/bin/testbench package:discover --ansi"
         ],
-        "test": "vendor/bin/testbench package:test"
+        "test": "vendor/bin/phpunit"
     },
     "config": {
         "allow-plugins": {
