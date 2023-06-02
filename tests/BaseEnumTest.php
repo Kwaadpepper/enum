@@ -10,7 +10,6 @@ use Kwaadpepper\Enum\Tests\Enums\DuplicatedLabels;
 use Kwaadpepper\Enum\Tests\Enums\DuplicatedValues;
 use Kwaadpepper\Enum\Tests\Enums\ForceStringsFromInteger;
 use Kwaadpepper\Enum\Tests\Models\Report;
-use Orchestra\Testbench\TestCase;
 
 class BaseEnumTest extends TestCase
 {
